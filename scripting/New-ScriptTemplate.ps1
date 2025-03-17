@@ -11,16 +11,20 @@
     A description of the parameter.
 
 .INPUTS
-    None
+    <Inputs if any, otherwise state None>
 
 .OUTPUTS
-    [string] The name of the entity.
+    <Outputs if any, otherwise state None>
 
 .NOTES
-    Author: Your Name
-    Date:   The date
-    Version: 1.0
+    Version:          1.0
+    Author:           Your Name
+    Creation Date:    <Date>
 
+    Exit Codes:
+    Code 0 = Success
+    Code 1 = Failure
+    Code 2 = Script Error
 
 .EXAMPLE
     .\New-ScriptTemplate.ps1
@@ -30,9 +34,14 @@
     https://www.example.com/help/New-ScriptTemplate
 #>
 
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory=$false)]
+    [string]$parameter1
+)
+
 begin {
     # Initialize variables and functions here
-
     function Test-IsElevated {
         $isElevated = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
         if ($isElevated) {
