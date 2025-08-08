@@ -23,7 +23,7 @@
     Updates Exchange Online transport rule with suspicious email regex patterns
 
 .NOTES
-    Version:          1.0
+    Version:          1.2
     Author:           Collin Laney
     Creation Date:    2025-08-08
 
@@ -76,7 +76,6 @@ begin {
         return @(
             # SUSPICIOUS PATTERNS - High Priority (URLs and domains)
             "blocked\ your?\ online",
-            "suspicious\ activit",
             "updated?\ your\ account\ record",
             "sign\ in\S{0,7}(with\ )?\ your\ email\ address",
             "Verify\ your\ ID\s",
@@ -100,7 +99,6 @@ begin {
             "\.freetemplate\.site",
             "\.ezweb123\.com",
             "\.tripod\.com",
-            "\.myfreesites\.net",
             "mailowa",
             "-icloud",
             "icloud-",
@@ -132,7 +130,6 @@ begin {
             "/office\S{0,3}365/",
             "/docu\S{0,3}sign\S{1,4}/",
             "-icloud\Wcom",
-            "/https?/www/",
             
             # SUSPICIOUS PHRASES - Critical
             "word must be installed",
@@ -141,12 +138,6 @@ begin {
             "informations has been",
             "fallow our process",
             "confirm your informations",
-            "failed to validate",
-            "unable to verify",
-            "delayed payment",
-            "activate your account",
-            "Update your payment",
-            "submit your payment",
             "via Paypal",
             "has been compromised",
             "FRAUD NOTICE",
@@ -174,13 +165,9 @@ begin {
             "your\ (customer\ )?account\ has",
             "your\ (customer\ )?account\ was",
             "new voice(\ )?mail",
-            "Periodic\ Maintenance",
             "refund\ not\ approved",
             "account\ (is\ )?on\ hold",
-            "wire\ transfer",
-            "secure\ update",
-            "temporar(il)?y\ deactivated",
-            "verification\ required"
+            "temporar(il)?y\ deactivated"
         )
     }
     
@@ -243,14 +230,17 @@ begin {
     
     function Get-DefaultDisclaimerHtml {
         return @"
-<div style="
+<div
+	style="
 		background-color: #f0fdfa;
 		border: 1pt solid #14b8a6;
 		border-left: 6pt solid #0f766e;
 		border-radius: 4pt;
 		margin: 10pt 0;
 		padding: 12pt;
-		font-family: Verdana, sans-serif;">
+		font-family: Verdana, sans-serif;
+	"
+>
 	<div style="margin-bottom: 8pt; color: #0f766e; font-weight: bold; font-size: 12pt">SUSPICIOUS EMAIL</div>
 	<div style="font-size: 10pt; color: #374151; line-height: 1.4; margin-bottom: 8pt">
 		This email has been flagged for containing potentially suspicious patterns, including phishing keywords, urgent language, or
@@ -303,7 +293,6 @@ begin {
                 -ApplyHtmlDisclaimerText $disclaimerHtml `
                 -ApplyHtmlDisclaimerLocation Prepend `
                 -ApplyHtmlDisclaimerFallbackAction Wrap `
-                -Comments "Automatically created by Update-SuspiciousEmailDisclaimerRule.ps1 script to detect suspicious email patterns and apply warning disclaimers."
             
             Write-Host "Successfully created transport rule '$RuleName'" -ForegroundColor Green
             return $true
