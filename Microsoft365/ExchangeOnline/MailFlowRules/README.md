@@ -160,80 +160,48 @@ Use this HTML template for your disclaimer message:
 ```html
 <div
 	style="
-		color: #910a19;
 		background-color: #fdf2f4;
-		border: 2pt solid #910a19;
-		border-radius: 6pt;
-		margin: 8pt 0;
-		padding: 10pt;
-		font-family: Verdana, Geneva, Tahoma, sans-serif;
-		line-height: 1.5;
+		border: 1pt solid #f87171;
+		border-left: 6pt solid #910a19;
+		border-radius: 4pt;
+		margin: 10pt 0;
+		padding: 12pt;
+		font-family: Verdana, sans-serif;
 	"
 >
-	<div style="display: flex; align-items: center; margin-bottom: 6pt">
-		<div
-			style="
-				background-color: #910a19;
-				color: white;
-				border-radius: 50%;
-				width: 18pt;
-				height: 18pt;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-right: 6pt;
-				font-size: 12pt;
-			"
-			>⚠</div
-		>
-		<strong style="font-size: 11pt">POTENTIAL SPOOFING DETECTED</strong>
+	<div style="margin-bottom: 8pt; color: #910a19; font-weight: bold; font-size: 12pt">POTENTIAL SPOOFING</div>
+	<div style="font-size: 10pt; color: #374151; line-height: 1.4; margin-bottom: 8pt">
+		This external email appears to mimic someone from your organization. This could be a legitimate personal email, forwarded message,
+		or a spoofing attempt.
 	</div>
-	<div style="font-size: 10pt; color: #333333">
-		<p>
-			<strong style="color: #910a19">CAUTION:</strong> External email mimicking internal user. <br />
-			<strong style="color: #910a19">Reasons:</strong> Personal account, spoofing attempt, or forwarded email. <br />
-			<strong style="color: #910a19">Action:</strong> Verify sender before responding to sensitive requests. <br />
-		</p>
+	<div style="background-color: #fee2e2; padding: 8pt; border-radius: 3pt; font-size: 9pt; color: #910a19">
+		<strong>RECOMMENDED ACTIONS:</strong>
+		<br />• Verify sender identity through known, trusted contact methods <br />• Be cautious with sensitive information requests or
+		urgent actions <br />• Report to the IT Department if you are unsure
 	</div>
 </div>
 ```
 
 <div
 	style="
-		color: #910a19;
 		background-color: #fdf2f4;
-		border: 2pt solid #910a19;
-		border-radius: 6pt;
-		margin: 8pt 0;
-		padding: 10pt;
-		font-family: Verdana, Geneva, Tahoma, sans-serif;
-		line-height: 1.5;
+		border: 1pt solid #f87171;
+		border-left: 6pt solid #910a19;
+		border-radius: 4pt;
+		margin: 10pt 0;
+		padding: 12pt;
+		font-family: Verdana, sans-serif;
 	"
 >
-	<div style="display: flex; align-items: center; margin-bottom: 6pt">
-		<div
-			style="
-				background-color: #910a19;
-				color: white;
-				border-radius: 50%;
-				width: 18pt;
-				height: 18pt;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-right: 6pt;
-				font-size: 12pt;
-			"
-			>⚠</div
-		>
-		<strong style="font-size: 11pt">POTENTIAL SPOOFING DETECTED</strong>
+	<div style="margin-bottom: 8pt; color: #910a19; font-weight: bold; font-size: 12pt">POTENTIAL SPOOFING</div>
+	<div style="font-size: 10pt; color: #374151; line-height: 1.4; margin-bottom: 8pt">
+		This external email appears to mimic someone from your organization. This could be a legitimate personal email, forwarded message,
+		or a spoofing attempt.
 	</div>
-	<div style="font-size: 10pt; color: #333333">
-		<p>
-			<strong style="color: #910a19">CAUTION:</strong> External email mimicking internal user. <br />
-			<strong style="color: #910a19">Reasons:</strong> Personal account, spoofing attempt, or forwarded email. <br />
-			<strong style="color: #910a19">Action:</strong> Verify sender before responding to sensitive requests. <br />
-		</p>
+	<div style="background-color: #fee2e2; padding: 8pt; border-radius: 3pt; font-size: 9pt; color: #910a19">
+		<strong>RECOMMENDED ACTIONS:</strong>
+		<br />• Verify sender identity through known, trusted contact methods <br />• Be cautious with sensitive information requests or
+		urgent actions <br />• Report to the IT Department if you are unsure
 	</div>
 </div>
 
@@ -241,23 +209,39 @@ Use this HTML template for your disclaimer message:
 
 ```html
 <div
-	style="background-color: #fdf2f4;border-left: 4px solid #910a19;padding: 8pt;margin: 8pt 0;font-size: 10pt;font-family: Verdana, Geneva, Tahoma, sans-serif;line-height: 1.5;"
+	style="
+		background-color: #fdf2f4;
+		border-left: 4px solid #910a19;
+		padding: 8pt;
+		margin: 8pt 0;
+		font-size: 10pt;
+		font-family: Verdana, Geneva, Tahoma, sans-serif;
+		line-height: 1.5;
+	"
 >
 	<strong style="color: #910a19; font-size: 12pt; font-family: monospace">WARNING:</strong>
 	<span style="color: #333333">
 		This email appears to be from someone in your organization but was sent externally. Please verify the sender before responding to
-		requests for sensitive information.
+		requests for sensitive information. Report to the IT Department if you are unsure.
 	</span>
 </div>
 ```
 
 <div
-	style="background-color: #fdf2f4;border-left: 4px solid #910a19;padding: 8pt;margin: 8pt 0;font-size: 10pt;font-family: Verdana, Geneva, Tahoma, sans-serif;line-height: 1.5;"
+	style="
+		background-color: #fdf2f4;
+		border-left: 4px solid #910a19;
+		padding: 8pt;
+		margin: 8pt 0;
+		font-size: 10pt;
+		font-family: Verdana, Geneva, Tahoma, sans-serif;
+		line-height: 1.5;
+	"
 >
 	<strong style="color: #910a19; font-size: 12pt; font-family: monospace">WARNING:</strong>
 	<span style="color: #333333">
 		This email appears to be from someone in your organization but was sent externally. Please verify the sender before responding to
-		requests for sensitive information.
+		requests for sensitive information. Report to the IT Department if you are unsure.
 	</span>
 </div>
 
