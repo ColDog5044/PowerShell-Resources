@@ -24,17 +24,21 @@ This script addresses the growing threat of phishing and suspicious emails by au
 
 1. **Connects** to Exchange Online using modern authentication
 2. **Loads** 100 carefully curated suspicious email patterns
-3. **Updates** the specified transport rule with pattern matching for subjects and message bodies
-4. **Optimizes** for Exchange Online's 8KB rule size limit
-5. **Provides** detailed logging and error handling
+3. **Checks** if the specified transport rule exists
+4. **Creates** a new rule with built-in disclaimer if `-CreateIfNotExists` is used
+5. **Updates** existing rules with pattern matching for subjects and message bodies
+6. **Optimizes** for Exchange Online's 8KB rule size limit
+7. **Provides** detailed logging and error handling
 
 ## Features
 
 -   ✅ **Comprehensive Pattern Database**: 100+ suspicious email indicators
 -   ✅ **Multi-Category Detection**: URLs, domains, phrases, and subject patterns
 -   ✅ **Size Optimized**: Stays within Exchange Online 8KB limit (~7,978 bytes used)
+-   ✅ **Automatic Rule Creation**: Creates transport rules automatically if they don't exist
 -   ✅ **Automatic Module Management**: Installs ExchangeOnlineManagement module if missing
 -   ✅ **Smart Connection Handling**: Detects existing Exchange Online sessions
+-   ✅ **Built-in HTML Disclaimer**: Professional warning template included
 -   ✅ **Flexible Configuration**: Customizable rule names
 -   ✅ **Robust Error Handling**: Detailed exit codes and logging
 -   ✅ **Professional Template**: Follows PowerShell best practices
@@ -78,16 +82,27 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ColDog5044/PowerShell-
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### 3. Create the Transport Rule
+### 3. Create the Transport Rule (Optional)
 
-Before running the script, you'll need to create the transport rule in Exchange Online:
+**The script can now automatically create the transport rule for you!** You have two options:
+
+#### Option A: Automatic Creation (Recommended)
+
+```powershell
+# Let the script create the rule automatically with built-in disclaimer
+.\Update-SuspiciousEmailDisclaimerRule.ps1 -CreateIfNotExists
+```
+
+#### Option B: Manual Creation
+
+Before running the script, you can manually create the transport rule in Exchange Online:
 
 1. Go to **Exchange Admin Center** → **Mail Flow** → **Rules**
 2. Click **"+ Add a rule"** → **"Apply disclaimers..."**
 3. Configure the rule with these settings:
     - **Name**: `Apply Disclaimer for Suspicious Emails`
     - **Apply this rule if**: `The subject or body` → `matches any of these text patterns` → `(will be populated by script)`
-    - **Do the following**: `Apply the disclaimer` → `Append the disclaimer`
+    - **Do the following**: `Apply the disclaimer` → `Prepend the disclaimer`
     - **Enter text**: Use the [HTML disclaimer template](#html-disclaimer-template) below
 
 ## Usage
@@ -95,8 +110,11 @@ Before running the script, you'll need to create the transport rule in Exchange 
 ### Basic Usage
 
 ```powershell
-# Run with default settings
+# Run with default settings (updates existing rule)
 .\Update-SuspiciousEmailDisclaimerRule.ps1
+
+# Create a new rule if it doesn't exist
+.\Update-SuspiciousEmailDisclaimerRule.ps1 -CreateIfNotExists
 ```
 
 ### Advanced Usage
@@ -105,12 +123,21 @@ Before running the script, you'll need to create the transport rule in Exchange 
 # Specify a custom rule name
 .\Update-SuspiciousEmailDisclaimerRule.ps1 -RuleName "Custom Suspicious Email Rule"
 
+# Create rule with custom name if it doesn't exist
+.\Update-SuspiciousEmailDisclaimerRule.ps1 -RuleName "My Phishing Rule" -CreateIfNotExists
+
 # Run with verbose output
 .\Update-SuspiciousEmailDisclaimerRule.ps1 -Verbose
 
 # Run with specific rule name and verbose logging
 .\Update-SuspiciousEmailDisclaimerRule.ps1 -RuleName "My Phishing Detection Rule" -Verbose
 ```
+
+### Parameter Details
+
+- **`-RuleName`**: Specifies the name of the transport rule to create or update (default: "Apply Disclaimer for Suspicious Emails")
+- **`-CreateIfNotExists`**: Switch parameter that enables automatic rule creation if the specified rule doesn't exist
+- **`-Verbose`**: Provides detailed output for troubleshooting and monitoring script execution
 
 ## Pattern Categories
 
@@ -326,7 +353,10 @@ Connect-ExchangeOnline -UserPrincipalName admin@yourdomain.com
 
 ```powershell
 # Error: Transport rule 'Apply Disclaimer for Suspicious Emails' not found
-# Solution: Create the rule first or specify correct name
+# Solution 1: Use -CreateIfNotExists to create the rule automatically
+.\Update-SuspiciousEmailDisclaimerRule.ps1 -CreateIfNotExists
+
+# Solution 2: Create the rule manually first or specify correct name
 .\Update-SuspiciousEmailDisclaimerRule.ps1 -RuleName "Your Actual Rule Name"
 ```
 

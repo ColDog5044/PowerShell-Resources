@@ -11,8 +11,13 @@
 .PARAMETER RuleName
     The name of the transport rule to update. Defaults to "Apply Disclaimer for Suspicious Emails".
 
+.PARAMETER CreateIfNotExists
+    Switch parameter. If specified, the script will create a new transport rule if one doesn't exist.
+    The new rule will include the suspicious patterns and a default HTML disclaimer.
+
 .INPUTS
     RuleName - The name of the Exchange Online transport rule to update
+    CreateIfNotExists - Switch to enable automatic rule creation
 
 .OUTPUTS
     Updates Exchange Online transport rule with suspicious email regex patterns
@@ -36,11 +41,19 @@
 
 .EXAMPLE
     .\Update-SuspiciousEmailDisclaimerRule.ps1
-    Runs the script with default parameters.
+    Runs the script with default parameters to update an existing rule.
 
 .EXAMPLE
     .\Update-SuspiciousEmailDisclaimerRule.ps1 -RuleName "Custom Suspicious Email Rule"
     Runs the script with a custom rule name.
+
+.EXAMPLE
+    .\Update-SuspiciousEmailDisclaimerRule.ps1 -CreateIfNotExists
+    Creates a new rule if it doesn't exist, otherwise updates the existing rule.
+
+.EXAMPLE
+    .\Update-SuspiciousEmailDisclaimerRule.ps1 -RuleName "My Phishing Rule" -CreateIfNotExists
+    Creates or updates a rule with a custom name.
 
 .LINK
     https://docs.microsoft.com/en-us/powershell/module/exchange/set-transportrule
@@ -50,7 +63,10 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string]$RuleName = "Apply Disclaimer for Suspicious Emails"
+    [string]$RuleName = "Apply Disclaimer for Suspicious Emails",
+    
+    [Parameter(Mandatory = $false)]
+    [switch]$CreateIfNotExists
 )
 
 begin {
@@ -168,6 +184,24 @@ begin {
         )
     }
     
+    function Test-ExchangeOnlineConnection {
+        try {
+            $session = Get-PSSession | Where-Object {$_.ConfigurationName -eq "Microsoft.Exchange" -and $_.State -eq "Opened"}
+            if ($session) {
+                Write-Verbose "Exchange Online connection found"
+                return $true
+            }
+            else {
+                Write-Verbose "No active Exchange Online connection found"
+                return $false
+            }
+        }
+        catch {
+            Write-Verbose "Error checking Exchange Online connection: $($_.Exception.Message)"
+            return $false
+        }
+    }
+
     function Test-ModuleInstalled {
         param (
             [string]$ModuleName
@@ -207,20 +241,75 @@ begin {
         }
     }
     
-    function Test-ExchangeOnlineConnection {
+    function Get-DefaultDisclaimerHtml {
+        return @"
+<div style="
+		background-color: #f0fdfa;
+		border: 1pt solid #14b8a6;
+		border-left: 6pt solid #0f766e;
+		border-radius: 4pt;
+		margin: 10pt 0;
+		padding: 12pt;
+		font-family: Verdana, sans-serif;">
+	<div style="margin-bottom: 8pt; color: #0f766e; font-weight: bold; font-size: 12pt">SUSPICIOUS EMAIL</div>
+	<div style="font-size: 10pt; color: #374151; line-height: 1.4; margin-bottom: 8pt">
+		This email has been flagged for containing potentially suspicious patterns, including phishing keywords, urgent language, or
+		questionable attachments.
+	</div>
+	<div style="background-color: #ccfbf1; padding: 8pt; border-radius: 3pt; font-size: 9pt; color: #0f766e">
+		<strong>RECOMMENDED ACTIONS:</strong>
+		<br />• Do not click links or download attachments without verification <br />• Independently verify sender identity through known
+		contact methods <br />• Report to the IT Department if you believe this is a legitimate email
+	</div>
+</div>
+"@
+    }
+
+    function Test-TransportRuleExists {
+        param (
+            [string]$RuleName
+        )
+        
         try {
-            $session = Get-PSSession | Where-Object { $_.ConfigurationName -eq "Microsoft.Exchange" -and $_.State -eq "Opened" }
-            if ($session) {
-                Write-Verbose "Exchange Online session is already established"
+            $rule = Get-TransportRule -Identity $RuleName -ErrorAction SilentlyContinue
+            if ($rule) {
+                Write-Verbose "Transport rule '$RuleName' found"
                 return $true
             }
             else {
-                Write-Verbose "No active Exchange Online session found"
+                Write-Verbose "Transport rule '$RuleName' not found"
                 return $false
             }
         }
         catch {
-            Write-Verbose "Error checking Exchange Online connection: $($_.Exception.Message)"
+            Write-Verbose "Error checking for transport rule '$RuleName': $($_.Exception.Message)"
+            return $false
+        }
+    }
+
+    function New-SuspiciousEmailRule {
+        param (
+            [string]$RuleName,
+            [string[]]$SuspiciousPatterns
+        )
+        
+        try {
+            $disclaimerHtml = Get-DefaultDisclaimerHtml
+            
+            Write-Host "Creating new transport rule '$RuleName'..." -ForegroundColor Yellow
+            
+            New-TransportRule -Name $RuleName `
+                -SubjectOrBodyMatchesPatterns $SuspiciousPatterns `
+                -ApplyHtmlDisclaimerText $disclaimerHtml `
+                -ApplyHtmlDisclaimerLocation Prepend `
+                -ApplyHtmlDisclaimerFallbackAction Wrap `
+                -Comments "Automatically created by Update-SuspiciousEmailDisclaimerRule.ps1 script to detect suspicious email patterns and apply warning disclaimers."
+            
+            Write-Host "Successfully created transport rule '$RuleName'" -ForegroundColor Green
+            return $true
+        }
+        catch {
+            Write-Error "Failed to create transport rule '$RuleName': $($_.Exception.Message)"
             return $false
         }
     }
@@ -255,7 +344,24 @@ process {
 
         Write-Verbose "Loaded $($suspiciousPatterns.Count) suspicious patterns"
 
-        # Update the mail flow rule with both subject and body matching
+        # Check if transport rule exists
+        if (-not (Test-TransportRuleExists -RuleName $RuleName)) {
+            if ($CreateIfNotExists) {
+                # Create new rule with patterns and disclaimer
+                if (New-SuspiciousEmailRule -RuleName $RuleName -SuspiciousPatterns $suspiciousPatterns) {
+                    Write-Host "Successfully created and configured transport rule with $($suspiciousPatterns.Count) suspicious patterns" -ForegroundColor Green
+                    exit 0
+                } else {
+                    Write-Error "Failed to create transport rule '$RuleName'. Cannot continue."
+                    exit 1
+                }
+            } else {
+                Write-Error "Transport rule '$RuleName' does not exist. Use -CreateIfNotExists parameter to create it automatically."
+                exit 1
+            }
+        }
+
+        # Update existing mail flow rule with patterns
         Write-Host "Updating transport rule '$RuleName'..." -ForegroundColor Yellow
         Set-TransportRule -Identity $RuleName -SubjectOrBodyMatchesPatterns $suspiciousPatterns
 
