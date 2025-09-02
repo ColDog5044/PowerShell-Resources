@@ -546,11 +546,11 @@ $($script:BitLockerReport.RecoveryKeys | ForEach-Object {
 
 Warnings:
 --------
-$($script:BitLockerReport.Warnings | ForEach-Object { "⚠️ $_" } | Out-String)
+$($script:BitLockerReport.Warnings | ForEach-Object { "Warning: $_" } | Out-String)
 
 Errors:
 ------
-$($script:BitLockerReport.Errors | ForEach-Object { "❌ $_" } | Out-String)
+$($script:BitLockerReport.Errors | ForEach-Object { "Error: $_" } | Out-String)
 
 Exit Code: $script:ExitCode
 "@
