@@ -79,7 +79,7 @@ param (
     [string]$EncryptionMethod = 'XtsAes256',
     
     [Parameter(Mandatory = $false)]
-    [string]$RecoveryPasswordPath,
+    [string]$RecoveryKeyPath,
     
     [Parameter(Mandatory = $false)]
     [switch]$SkipHardwareTest,
@@ -246,7 +246,7 @@ begin {
                 Write-Host "Recovery Password: $($Script:RecoveryPassword)" -ForegroundColor Cyan
                 
                 # Save to file if path specified
-                if ($RecoveryPasswordPath) {
+                if ($RecoveryKeyPath) {
                     try {
                         $recoveryContent = @"
 BitLocker Recovery Information
@@ -258,8 +258,8 @@ Recovery Password: $($Script:RecoveryPassword)
 IMPORTANT: Keep this information secure and accessible.
 You will need this password to unlock your drive if you lose access to your primary unlock method.
 "@
-                        $recoveryContent | Out-File -FilePath $RecoveryPasswordPath -Encoding UTF8
-                        Write-Host "Recovery password saved to: $RecoveryPasswordPath" -ForegroundColor Green
+                        $recoveryContent | Out-File -FilePath $RecoveryKeyPath -Encoding UTF8
+                        Write-Host "Recovery password saved to: $RecoveryKeyPath" -ForegroundColor Green
                     }
                     catch {
                         Write-Warning "Could not save recovery password to file: $($_.Exception.Message)"
@@ -437,7 +437,7 @@ end {
         Write-Host "`nCleanup: BitLocker enablement process completed successfully." -ForegroundColor Green
         
         # Final reminder about recovery password
-        if ($Script:RecoveryPassword -and -not $RecoveryPasswordPath) {
+        if ($Script:RecoveryPassword -and -not $RecoveryKeyPath) {
             Write-Host "`nIMPORTANT REMINDER:" -ForegroundColor Red
             Write-Host "Your BitLocker recovery password is: $($Script:RecoveryPassword)" -ForegroundColor Cyan
             Write-Host "Please save this password in a secure location immediately!" -ForegroundColor Red
