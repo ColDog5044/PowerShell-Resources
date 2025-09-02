@@ -51,7 +51,7 @@
 
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory = $true)]
     [string]$Repository = "\\networkshare\Office365Installer\",
     
     [Parameter(Mandatory = $false)]
