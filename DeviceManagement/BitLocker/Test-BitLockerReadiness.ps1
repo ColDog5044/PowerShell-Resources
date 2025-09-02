@@ -371,14 +371,14 @@ begin {
         if ($Report.Warnings.Count -gt 0) {
             Write-Host "`n--- Warnings ---" -ForegroundColor Yellow
             foreach ($warning in $Report.Warnings) {
-                Write-Host "⚠️  $warning" -ForegroundColor Yellow
+                Write-Host "$warning" -ForegroundColor Yellow
             }
         }
         
         if ($Report.Errors.Count -gt 0) {
             Write-Host "`n--- Errors ---" -ForegroundColor Red
             foreach ($err in $Report.Errors) {
-                Write-Host "❌ $err" -ForegroundColor Red
+                Write-Host "$err" -ForegroundColor Red
             }
         }
     }
@@ -481,13 +481,13 @@ process {
         
         # Success message based on readiness
         if ($script:ExitCode -eq 0) {
-            Write-Host "✅ BitLocker readiness check completed successfully - System is ready for BitLocker!" -ForegroundColor Green
+            Write-Host "BitLocker readiness check completed successfully - System is ready for BitLocker!" -ForegroundColor Green
         }
         elseif ($script:ExitCode -eq 1) {
-            Write-Host "⚠️ BitLocker readiness check found requirements not met - Address issues before enabling BitLocker" -ForegroundColor Yellow
+            Write-Host "BitLocker readiness check found requirements not met - Address issues before enabling BitLocker" -ForegroundColor Yellow
         }
         else {
-            Write-Host "❌ BitLocker readiness check encountered errors - Review script execution issues" -ForegroundColor Red
+            Write-Host "BitLocker readiness check encountered errors - Review script execution issues" -ForegroundColor Red
         }
         
     }
@@ -572,31 +572,31 @@ Exit Code: $script:ExitCode
     Write-Host "`n=== BitLocker Readiness Assessment ===" -ForegroundColor Cyan
     
     if ($script:ExitCode -eq 1) {
-        Write-Host "🔧 Requirements Not Met - Address Before Enabling BitLocker:" -ForegroundColor Yellow
+        Write-Host "Requirements Not Met - Address Before Enabling BitLocker:" -ForegroundColor Yellow
         foreach ($warning in $script:BitLockerReport.Warnings | Where-Object { $_ -like "*TPM*" -or $_ -like "*BitLocker feature*" }) {
-            Write-Host "   • $warning" -ForegroundColor Yellow
+            Write-Host " - $warning" -ForegroundColor Yellow
         }
     }
     
     if ($script:BitLockerReport.Warnings.Count -gt 0) {
-        Write-Host "💡 Current Status & Recommendations:" -ForegroundColor Cyan
+        Write-Host "Current Status & Recommendations:" -ForegroundColor Cyan
         foreach ($warning in $script:BitLockerReport.Warnings) {
-            Write-Host "   • $warning" -ForegroundColor Gray
+            Write-Host " - $warning" -ForegroundColor Gray
         }
     }
     
     if ($script:ExitCode -eq 0) {
-        Write-Host "✅ System is ready for BitLocker deployment when needed." -ForegroundColor Green
+        Write-Host "System is ready for BitLocker deployment when needed." -ForegroundColor Green
     }
     
     # Additional recommendations
-    Write-Host "`n📋 BitLocker Deployment Preparation:" -ForegroundColor Cyan
-    Write-Host "   • Plan recovery key backup strategy (Azure AD, Active Directory, or secure file storage)" -ForegroundColor Gray
-    Write-Host "   • Test BitLocker enablement on a pilot group of devices first" -ForegroundColor Gray
-    Write-Host "   • Ensure BIOS/UEFI firmware is updated before deployment" -ForegroundColor Gray
-    Write-Host "   • Consider enabling Secure Boot for enhanced security" -ForegroundColor Gray
-    Write-Host "   • Document BitLocker policies and procedures for your organization" -ForegroundColor Gray
-    Write-Host "   • Plan for regular BitLocker status monitoring and compliance checks" -ForegroundColor Gray
+    Write-Host "`nBitLocker Deployment Preparation:" -ForegroundColor Cyan
+    Write-Host " - Plan recovery key backup strategy (Azure AD, Active Directory, or secure file storage)" -ForegroundColor Gray
+    Write-Host " - Test BitLocker enablement on a pilot group of devices first" -ForegroundColor Gray
+    Write-Host " - Ensure BIOS/UEFI firmware is updated before deployment" -ForegroundColor Gray
+    Write-Host " - Consider enabling Secure Boot for enhanced security" -ForegroundColor Gray
+    Write-Host " - Document BitLocker policies and procedures for your organization" -ForegroundColor Gray
+    Write-Host " - Plan for regular BitLocker status monitoring and compliance checks" -ForegroundColor Gray
     
     Write-Host "`nBitLocker readiness check completed with exit code: $script:ExitCode" -ForegroundColor $(
         switch ($script:ExitCode) {
